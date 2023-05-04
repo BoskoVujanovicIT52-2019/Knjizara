@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Knjizara.Model
 {
@@ -15,6 +16,12 @@ namespace Knjizara.Model
         public String Grad { get; set; }
         public String Drzava { get; set; }
         public String Lozinka { get; set; }
+        public String Salt { get; set; } //dodato
+
+        [DefaultValue("User")]
+        public String ulogaClana { get; set; }
+
+       
 
     }
 }

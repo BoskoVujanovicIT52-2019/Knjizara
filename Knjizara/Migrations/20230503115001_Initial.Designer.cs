@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Knjizara.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230315152754_InitiallCreate")]
-    partial class InitiallCreate
+    [Migration("20230503115001_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,7 +133,15 @@ namespace Knjizara.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Telefon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ulogaClana")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

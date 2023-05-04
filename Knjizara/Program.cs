@@ -4,9 +4,15 @@ using Knjizara.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMvc();
 
 // Add services to the container.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -27,6 +33,8 @@ builder.Services.AddScoped<IRacunRepository, RacunRepository>();
 builder.Services.AddScoped<IStavkaKorpe, StavkaKorpeRepository>();
 builder.Services.AddScoped<ITipKorisnika, TipKorisnikaRepository>();
 builder.Services.AddScoped<IZanrRepository, ZanrRepository>();
+builder.Services.AddScoped<IAuth, Auth>();
+builder.Services.AddScoped<Auth>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -37,7 +45,30 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// za Token
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+//
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<DataContext>();
+    //    dbContext.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,9 +77,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+//
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapRazorPages();
+});
+//
+
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+
+
+app.UseAuthentication(); //dodato
 
 app.MapControllers();
 

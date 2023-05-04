@@ -5,7 +5,7 @@
 namespace Knjizara.Migrations
 {
     /// <inheritdoc />
-    public partial class InitiallCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,7 +60,9 @@ namespace Knjizara.Migrations
                     Adresa = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Grad = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Drzava = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Lozinka = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Lozinka = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ulogaClana = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

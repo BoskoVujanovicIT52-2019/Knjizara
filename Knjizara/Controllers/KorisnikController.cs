@@ -1,6 +1,11 @@
 ﻿using Knjizara.Interfaces;
 using Knjizara.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+
 
 namespace Knjizara.Controllers
 {
@@ -108,6 +113,31 @@ namespace Knjizara.Controllers
             }
             return NoContent();
 
+        }
+
+        [HttpGet("Admins")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminsEndpoint()
+        {
+            var currentUser=GetCurrentUser();
+            return Ok($"HI {currentUser.Ime}, you are an {currentUser.ulogaClana} user.");
+        }
+
+        private Korisnik GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity!=null) { 
+                var userClaims = identity.Claims;
+
+                return new Korisnik
+                {
+                    Email= userClaims.FirstOrDefault(e=>e.Type==ClaimTypes.Email)?.Value,
+                    Ime = userClaims.FirstOrDefault(e => e.Type == ClaimTypes.GivenName)?.Value,
+                    Prezime = userClaims.FirstOrDefault(e => e.Type == ClaimTypes.Surname)?.Value,
+                    ulogaClana= userClaims.FirstOrDefault(e=>e.Type==ClaimTypes.Role)?.Value
+                };
+            }
+            return null;
         }
 
     }

@@ -9,6 +9,7 @@ namespace Knjizara.Interfaces
         bool CreateKorisnik(Korisnik korisnik);
         bool UpdateKorisnik(Korisnik korisnik);
         bool DeleteKorisnik(Korisnik korisnik);
+        
         bool Save();
 
     }
